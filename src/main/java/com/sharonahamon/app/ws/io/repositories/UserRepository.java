@@ -1,4 +1,4 @@
-package com.sharonahamon.app.ws;
+package com.sharonahamon.app.ws.io.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

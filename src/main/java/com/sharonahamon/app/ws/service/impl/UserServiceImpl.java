@@ -1,13 +1,16 @@
 package com.sharonahamon.app.ws.service.impl;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.sharonahamon.app.ws.UserRepository;
+import com.sharonahamon.app.ws.io.repositories.UserRepository;
 import com.sharonahamon.app.ws.io.entity.UserEntity;
 import com.sharonahamon.app.ws.service.UserService;
 import com.sharonahamon.app.ws.shared.Utils;
@@ -56,8 +59,27 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		UserEntity foundUser = userRepository.findByEmail(email);
+		
+		if (foundUser == null) {
+			throw new UsernameNotFoundException(email);
+		}
+		
+		return new User(foundUser.getEmail(), foundUser.getEncryptedPassword(), new ArrayList());
+	}
+	
+	@Override
+	public UserDto getUser(String email) throws UsernameNotFoundException {
+		UserEntity foundUser = userRepository.findByEmail(email);
+		
+		if (foundUser == null) {
+			throw new UsernameNotFoundException(email);
+		}
+		
+		UserDto returnValue = new UserDto();
+		BeanUtils.copyProperties(foundUser, returnValue);
+		
+		return returnValue;
 	}
 }
